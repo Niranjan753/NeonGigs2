@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { useRecommendedGigs } from '@/contexts/RecommendedGigsContext';
 
 const RecommendedJobs = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('Newest');
-
-  const { recommendedGigs } = useRecommendedGigs();
-  const jobs = recommendedGigs.length > 0 ? recommendedGigs : [
+  const [recommendedGigs, setRecommendedGigs] = useState([
     { id: 1, title: "Full Stack Web Application Development", description: "We're seeking a skilled full-stack developer to build a robust web application for our e-commerce platform...", budget: "$3000.00", skills: ["React.js", "Node.js", "Express.js", "MongoDB", "RESTful APIs"], proposals: "10-15", timePosted: "2h ago" },
     { id: 2, title: "WordPress Website Redesign", description: "Our company is looking for an experienced WordPress developer to redesign and optimize our existing website...", budget: "$1500.00", skills: ["WordPress", "PHP", "MySQL", "HTML5", "CSS3"], proposals: "5-10", timePosted: "1d ago", rating: 4.9, spent: "$5000", location: "Canada" },
     { id: 3, title: "Frontend Development for SaaS Dashboard", description: "We need a talented frontend developer to create a modern, intuitive dashboard for our SaaS product...", budget: "$2500.00", skills: ["Vue.js", "JavaScript", "HTML5", "CSS3", "D3.js"], proposals: "<5", timePosted: "3h ago", rating: 4.7, spent: "$1800", location: "UK" },
@@ -17,9 +14,9 @@ const RecommendedJobs = () => {
     { id: 6, title: "Backend Developer for Scalable Microservices", description: "Seeking a backend developer to design and implement scalable microservices for our cloud-based platform...", budget: "$4000.00", skills: ["Java", "Spring Boot", "Microservices", "Docker", "Kubernetes"], proposals: "10-15", timePosted: "4h ago", rating: 4.9, spent: "$15000", location: "Australia" },
     { id: 7, title: "UI/UX Designer for Fintech Application", description: "We're looking for a talented UI/UX designer to create intuitive and visually appealing interfaces for our fintech app...", budget: "$2800.00", skills: ["Figma", "Adobe XD", "Sketch", "Prototyping", "User Research"], proposals: "<5", timePosted: "6h ago", rating: 4.7, spent: "$6000", location: "Singapore" },
     { id: 8, title: "DevOps Engineer for CI/CD Pipeline Optimization", description: "Need an experienced DevOps engineer to optimize our CI/CD pipeline and improve deployment processes...", budget: "$4500.00", skills: ["Jenkins", "AWS", "Docker", "Kubernetes", "Terraform"], proposals: "5-10", timePosted: "2d ago", rating: 4.8, spent: "$20000", location: "Netherlands" },
-  ];
+  ]);
 
-  const filteredJobs = jobs.filter(job => 
+  const filteredJobs = recommendedGigs.filter(job => 
     job.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 

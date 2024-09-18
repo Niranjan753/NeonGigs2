@@ -2,8 +2,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimes, faTrash, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { useRecommendedGigs } from '@/contexts/RecommendedGigsContext';
 
 interface Gig {
   id: number;
@@ -37,7 +35,6 @@ const ClientJobs = () => {
   const [newGig, setNewGig] = useState<Gig | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { addRecommendedGig } = useRecommendedGigs();
 
   const handleCreateGig = async () => {
     if (!prompt.trim()) {
@@ -49,21 +46,18 @@ const ClientJobs = () => {
     setError(null);
 
     try {
-      const genAI = new GoogleGenerativeAI("AIzaSyCuNbaPfdAA_-j5RMA9Hg0I_Rs9ecnArRw");
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const response = await fetch('/api/generate-jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: `Based on this job description, provide a JSON object with the following properties: title, description, budget (as a number), skills (as an array of strings). Job description: ${prompt}` }),
+      });
 
-      const result = await model.generateContent(`Based on this job description, provide a JSON object with the following properties: title, description, budget (as a number), skills (as an array of strings). Job description: ${prompt}`);
-      const response = await result.response;
-      const text = response.text();
-
-      // Extract JSON from the response text
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        throw new Error('No valid JSON found in the response');
+      if (!response.ok) {
+        throw new Error('Failed to generate gig');
       }
 
-      const jsonString = jsonMatch[0];
-      const generatedGig = JSON.parse(jsonString);
+      const data = await response.json();
+      const generatedGig = JSON.parse(data.result);
 
       setNewGig({
         id: gigs.length + 1,
@@ -95,29 +89,26 @@ const ClientJobs = () => {
   const handleRecommend = async (gig: Gig) => {
     setGigs(gigs.map(g => g.id === gig.id ? { ...g, isRecommending: true } : g));
     try {
-      const genAI = new GoogleGenerativeAI("AIzaSyCuNbaPfdAA_-j5RMA9Hg0I_Rs9ecnArRw");
-      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      const response = await fetch('/api/generate-jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: `Suggest 3 specific professional roles ideal for this job. Be concise and only list the professions. Job details:
+          Title: ${gig.title}
+          Description: ${gig.description}
+          Skills: ${gig.skills.join(', ')}
+          Budget: $${gig.budget}`
+        }),
+      });
 
-      const prompt = `Suggest 3 specific professional roles ideal for this job. Be concise and only list the professions. Job details:
-      Title: ${gig.title}
-      Description: ${gig.description}
-      Skills: ${gig.skills.join(', ')}
-      Budget: $${gig.budget}`;
+      if (!response.ok) {
+        throw new Error('Failed to generate recommendation');
+      }
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const recommendation = response.text();
+      const data = await response.json();
+      const recommendation = data.result;
 
       setGigs(gigs.map(g => g.id === gig.id ? { ...g, recommendation, isRecommending: false } : g));
-      addRecommendedGig({
-        id: gig.id,
-        title: gig.title,
-        description: gig.description,
-        budget: gig.budget,
-        skills: gig.skills,
-        proposals: gig.proposals,
-        postedAgo: gig.postedAgo
-      });
     } catch (error) {
       console.error('Error generating recommendation:', error);
       setGigs(gigs.map(g => g.id === gig.id ? { ...g, isRecommending: false } : g));
