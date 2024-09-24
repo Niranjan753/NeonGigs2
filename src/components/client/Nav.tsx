@@ -26,7 +26,7 @@ const ClientNav = () => {
   const menuItems = [
     { icon: faHome, text: "Dashboard", href: "/client/main" },
     { icon: faBriefcase, text: "My Jobs", href: "/client/jobs" },
-    { icon: faFileAlt, text: "Post a Job", href: "/client/post-job" },
+    { icon: faFileAlt, text: "Applications", href: "/client/application" },
     { icon: faEnvelope, text: "Messages", href: "/client/message" },
     { icon: faStar, text: "Reviews", href: "/client/reviews" },
     { icon: faChartLine, text: "Analytics", href: "/client/analytics" },

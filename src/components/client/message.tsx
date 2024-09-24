@@ -19,8 +19,8 @@ const ClientMessage = () => {
     }
   };
 
-  const handleChatClick = (chatId: number) => {
-    setActiveChatId(chatId);
+  const handleChatPersonClick = (id: number) => {
+    setActiveChatId(id);
   };
 
   const activeChat = chats.find(chat => chat.id === activeChatId);
@@ -35,14 +35,12 @@ const ClientMessage = () => {
             <div 
               key={chat.id}
               className={`flex items-center p-3 hover:bg-gray-800 cursor-pointer ${activeChatId === chat.id ? 'bg-gray-700' : ''}`}
-              onClick={() => handleChatClick(chat.id)}
+              onClick={() => handleChatPersonClick(chat.id)}
             >
               <div className="w-12 h-12 bg-gray-700 rounded-full mr-3"></div>
               <div>
                 <h3 className="font-semibold">{chat.freelancerName}</h3>
-                <p className="text-sm text-gray-400">
-                  {chat.messages[chat.messages.length - 1]?.text || 'No messages yet'}
-                </p>
+                <p className="text-sm text-gray-400">{chat.messages[chat.messages.length - 1]?.text}</p>
               </div>
             </div>
           ))}
@@ -63,7 +61,6 @@ const ClientMessage = () => {
                 <div key={msg.id} className={`mb-4 ${msg.sender === 'client' ? 'text-right' : ''}`}>
                   <div className={`rounded-lg p-2 inline-block ${msg.sender === 'client' ? 'bg-green-700' : 'bg-gray-800'}`}>
                     <p>{msg.text}</p>
-                    <p className="text-xs text-gray-400 mt-1">{new Date(msg.timestamp).toLocaleTimeString()}</p>
                   </div>
                 </div>
               ))}

@@ -16,11 +16,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <MessageProvider>
-          <RecommendedGigsProvider>
+        <RecommendedGigsProvider>
+          <MessageProvider>
             {children}
-          </RecommendedGigsProvider>
-        </MessageProvider>
+          </MessageProvider>
+        </RecommendedGigsProvider>
       </body>
     </html>
   );

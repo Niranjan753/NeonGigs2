@@ -5,6 +5,8 @@ import ClientNav from './Nav';
 import ClientProfile from './profile';
 import ClientJobs from './jobs';
 import ClientMessage from './message';
+import ClientPayments from './payments';
+import ClientApplications from './Applications';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBriefcase, faUsers, faDollarSign, faChartLine } from '@fortawesome/free-solid-svg-icons';
 
@@ -19,6 +21,10 @@ const ClientMain = () => {
             return <ClientJobs />;
       case '/client/message':
             return <ClientMessage />;
+      case '/client/application':
+        return <ClientApplications />;
+      case '/client/payments':
+        return <ClientPayments />;
       default:
         return (
           <>

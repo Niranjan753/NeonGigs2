@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTimes, faTrash, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { useRecommendedGigs } from '@/contexts/RecommendedGigsContext';
 
 interface Gig {
   id: number;
@@ -35,6 +36,7 @@ const ClientJobs = () => {
   const [newGig, setNewGig] = useState<Gig | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { addRecommendedGig } = useRecommendedGigs();
 
   const handleCreateGig = async () => {
     if (!prompt.trim()) {
@@ -57,11 +59,41 @@ const ClientJobs = () => {
       }
 
       const data = await response.json();
-      const generatedGig = JSON.parse(data.result);
+      let generatedGig;
+
+      // Attempt to extract JSON from the AI response
+      const jsonMatch = data.result.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          generatedGig = JSON.parse(jsonMatch[0]);
+        } catch (parseError) {
+          console.error('Error parsing generated gig:', parseError);
+          throw new Error('Invalid JSON format in AI response');
+        }
+      } else {
+        throw new Error('No valid JSON found in AI response');
+      }
+
+      if (!generatedGig || typeof generatedGig !== 'object') {
+        throw new Error('Invalid response format from AI');
+      }
+
+      // Check if the gig is related to web development
+      const isWebDeveloperGig = generatedGig.title.toLowerCase().includes('web developer') || 
+                                generatedGig.description.toLowerCase().includes('web developer') ||
+                                generatedGig.skills.some(skill => skill.toLowerCase().includes('web'));
+
+      // If it's a web developer gig, add it to recommended jobs
+      if (isWebDeveloperGig) {
+        addRecommendedGig(newGig);
+      }
 
       setNewGig({
         id: gigs.length + 1,
-        ...generatedGig,
+        title: generatedGig.title || 'Untitled Gig',
+        description: generatedGig.description || 'No description provided',
+        budget: typeof generatedGig.budget === 'number' ? generatedGig.budget : 0,
+        skills: Array.isArray(generatedGig.skills) ? generatedGig.skills : [],
         proposals: "0",
         postedAgo: "Just now"
       });
@@ -108,7 +140,20 @@ const ClientJobs = () => {
       const data = await response.json();
       const recommendation = data.result;
 
-      setGigs(gigs.map(g => g.id === gig.id ? { ...g, recommendation, isRecommending: false } : g));
+      const updatedGig = { ...gig, recommendation, isRecommending: false };
+      setGigs(gigs.map(g => g.id === gig.id ? updatedGig : g));
+
+      // Add the recommended gig to the RecommendedJobs
+      addRecommendedGig({
+        id: updatedGig.id,
+        title: updatedGig.title,
+        description: updatedGig.description,
+        budget: updatedGig.budget,
+        skills: updatedGig.skills,
+        proposals: updatedGig.proposals,
+        timePosted: updatedGig.postedAgo,
+        recommendation: updatedGig.recommendation
+      });
     } catch (error) {
       console.error('Error generating recommendation:', error);
       setGigs(gigs.map(g => g.id === gig.id ? { ...g, isRecommending: false } : g));

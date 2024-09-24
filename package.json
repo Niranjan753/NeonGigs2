@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build --debug",
-    "start": "next start",
-    "lint": "next lint",
+    "dev": "bun run next dev",
+    "build": "bun run next build",
+    "start": "bun run next start",
+    "lint": "bun run next lint",
     "pages:build": "bunx @cloudflare/next-on-pages",
-    "preview": "bun pages:build && wrangler pages dev",
-    "deploy": "bun pages:build && wrangler pages deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv env.d.ts",
+    "preview": "bun run pages:build && bun run wrangler pages dev",
+    "deploy": "bun run pages:build && bun run wrangler pages deploy",
+    "cf-typegen": "bun run wrangler types --env-interface CloudflareEnv env.d.ts",
     "setup": "bun run scripts/setup.ts"
   },
   "dependencies": {

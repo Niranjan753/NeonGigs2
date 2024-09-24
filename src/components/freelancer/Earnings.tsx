@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 
 const Earnings = () => {
   const [activeTab, setActiveTab] = useState('Monthly Earnings');
+  const [isEscrowLoading, setIsEscrowLoading] = useState(false);
+  const [escrowMessage, setEscrowMessage] = useState('');
 
   const monthlyEarningsData = [
     { month: 'Jan', earnings: 4000, projects: 5 },
@@ -30,13 +34,37 @@ const Earnings = () => {
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-  const escrowData = [
-    { id: 1, clientName: 'John Doe', paymentDetails: '$2000', projectName: 'E-commerce Website', status: 'Succeeded' },
-    { id: 2, clientName: 'Jane Smith', paymentDetails: '$3500', projectName: 'Mobile App Development', status: 'Processing' },
-    { id: 3, clientName: 'Bob Johnson', paymentDetails: '$1500', projectName: 'API Integration', status: 'Not Paid' },
-    { id: 4, clientName: 'Alice Brown', paymentDetails: '$2800', projectName: 'Data Visualization Dashboard', status: 'Succeeded' },
-    { id: 5, clientName: 'Charlie Wilson', paymentDetails: '$4200', projectName: 'AI Chatbot Implementation', status: 'Processing' },
-  ];
+  const [escrowData, setEscrowData] = useState([
+    { id: 1, date: '2023-06-15', paymentDetails: '$2000', clientName: 'John Doe', projectName: 'E-commerce Website', status: 'Succeeded' },
+    { id: 2, date: '2023-06-20', paymentDetails: '$750.00', clientName: 'Jane Smith', projectName: 'Mobile App Development', status: 'Processing' },
+    { id: 3, date: '2023-06-25', paymentDetails: '$1500', clientName: 'Bob Johnson', projectName: 'API Integration', status: 'Not Paid' },
+    { id: 4, date: '2023-06-30', paymentDetails: '$2800', clientName: 'Alice Brown', projectName: 'Data Visualization Dashboard', status: 'Succeeded' },
+    { id: 5, date: '2023-07-05', paymentDetails: '$4200', clientName: 'Charlie Wilson', projectName: 'AI Chatbot Implementation', status: 'Processing' },
+  ]);
+
+  const initiateEscrowPayment = (paymentId: number) => {
+    setIsEscrowLoading(true);
+    setEscrowMessage('Processing escrow payment...');
+
+    // Simulate API call to escrow service
+    setTimeout(() => {
+      setEscrowMessage('Verifying payment details...');
+      setTimeout(() => {
+        setEscrowMessage('Receiving funds from escrow...');
+        setTimeout(() => {
+          setIsEscrowLoading(false);
+          setEscrowMessage('');
+          
+          // Update the payment status to 'Succeeded'
+          setEscrowData(prevData =>
+            prevData.map(payment =>
+              payment.id === paymentId ? { ...payment, status: 'Succeeded' } : payment
+            )
+          );
+        }, 2000);
+      }, 2000);
+    }, 2000);
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -80,8 +108,8 @@ const Earnings = () => {
                   cursor={{fill: 'transparent'}}
                 />
                 <Legend wrapperStyle={{ color: '#888' }} />
-                <Bar yAxisId="left" dataKey="earnings" name="Earnings ($)" fill="#8884d8" shape="rect" />
-                <Bar yAxisId="right" dataKey="duration" name="Duration (days)" fill="#82ca9d" shape="rect" />
+                <Bar yAxisId="left" dataKey="earnings" name="Earnings ($)" fill="#8884d8" />
+                <Bar yAxisId="right" dataKey="duration" name="Duration (days)" fill="#82ca9d" />
               </BarChart>
             </ResponsiveContainer>
             <div className="mt-4 space-y-4">
@@ -163,13 +191,13 @@ const Earnings = () => {
               <thead>
                 <tr>
                   <th className="px-6 py-3 border-b border-gray-700 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-400 uppercase tracking-wider">
-                    S.No
-                  </th>
-                  <th className="px-6 py-3 border-b border-gray-700 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-400 uppercase tracking-wider">
-                    Client Name
+                    Date
                   </th>
                   <th className="px-6 py-3 border-b border-gray-700 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-400 uppercase tracking-wider">
                     Payment Details
+                  </th>
+                  <th className="px-6 py-3 border-b border-gray-700 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-400 uppercase tracking-wider">
+                    Client Name
                   </th>
                   <th className="px-6 py-3 border-b border-gray-700 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-400 uppercase tracking-wider">
                     Project Name
@@ -177,19 +205,22 @@ const Earnings = () => {
                   <th className="px-6 py-3 border-b border-gray-700 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-400 uppercase tracking-wider">
                     Status
                   </th>
+                  <th className="px-6 py-3 border-b border-gray-700 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-400 uppercase tracking-wider">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {escrowData.map((item) => (
                   <tr key={item.id}>
                     <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-700">
-                      <div className="text-sm leading-5 text-gray-300">{item.id}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-700">
-                      <div className="text-sm leading-5 text-gray-300">{item.clientName}</div>
+                      <div className="text-sm leading-5 text-gray-300">{item.date}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-700">
                       <div className="text-sm leading-5 text-gray-300">{item.paymentDetails}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-700">
+                      <div className="text-sm leading-5 text-gray-300">{item.clientName}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-700">
                       <div className="text-sm leading-5 text-gray-300">{item.projectName}</div>
@@ -202,6 +233,16 @@ const Earnings = () => {
                       }`}>
                         {item.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-700">
+                      {item.status === 'Processing' && (
+                        <button
+                          onClick={() => initiateEscrowPayment(item.id)}
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+                        >
+                          Receive Payment
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -228,6 +269,14 @@ const Earnings = () => {
           {renderTabContent()}
         </div>
       </div>
+      {isEscrowLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg text-black">
+            <FontAwesomeIcon icon={faLock} spin className="text-4xl mb-4 text-blue-500" />
+            <p className="text-lg font-semibold">{escrowMessage}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StarIcon, PaperClipIcon, PencilIcon } from '@heroicons/react/solid';
+import { StarIcon, PaperClipIcon, PencilIcon } from '@heroicons/react/24/solid';
 import man from './man.jpg';
 
 const Profile = () => {

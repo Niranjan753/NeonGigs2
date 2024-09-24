@@ -23,7 +23,7 @@ const Sidebar = () => {
     { icon: faEnvelope, text: 'Messages', href: '/freelancer/message' },
     { icon: faStar, text: 'Reviews', href: '/freelancer/reviews' },
     { icon: faChartLine, text: 'Analytics', href: '/freelancer/analytics' },
-    { icon: faComments, text: 'Feedback', href: '/freelancer/feedback' },
+    { icon: faComments, text: 'UpSkill', href: '/freelancer/upskill' },
     { icon: faDollarSign, text: 'Earnings', href: '/freelancer/earnings' },
     { icon: faUserCircle, text: 'Profile', href: '/freelancer/profile' },
     { icon: faCog, text: 'Settings', href: '/freelancer/settings' },

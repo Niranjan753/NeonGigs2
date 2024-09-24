@@ -27,14 +27,10 @@ export const MessageProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [chats, setChats] = useState<Chat[]>([
     {
       id: 1,
-      clientName: "Client A",
-      freelancerName: "Freelancer X",
-      messages: [
-        { id: 1, text: "Hello, I need a website built.", sender: 'client', timestamp: '2023-07-01 10:00:00' },
-        { id: 2, text: "Sure, I'd be happy to help. What are the specifics?", sender: 'freelancer', timestamp: '2023-07-01 10:05:00' },
-      ]
-    },
-    // Add more initial chats as needed
+      clientName: 'John Doe',
+      freelancerName: 'Jane Doe',
+      messages: []
+    }
   ]);
 
   const addMessage = (chatId: number, message: Omit<Message, 'id' | 'timestamp'>) => {

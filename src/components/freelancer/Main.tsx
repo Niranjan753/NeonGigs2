@@ -8,6 +8,7 @@ import Earnings from './Earnings';
 import Jobs from './Jobs';
 import RecommendedJobs from './RecommendedJobs';
 import Message from './message';
+import UpSkill from './upskill';
 import { LineChart, Line, PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const FreelancerMain = () => {
@@ -64,6 +65,8 @@ const FreelancerMain = () => {
         return <Jobs />;
       case '/freelancer/message':
         return <Message />;
+      case '/freelancer/upskill':
+        return <UpSkill />;
       case '/freelancer':
         return (
           <div className="space-y-4">
